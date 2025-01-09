@@ -53,15 +53,16 @@ export const getAllUsers = () => async(dispatch) => {
 }
 
 export const deleteUser = (user) => async (dispatch) => {
-  const {vehicles,userId} = user;
+  const {vehicles,_id } = user;
+  console.log(vehicles);
   dispatch(authRequest()); // Dispatching request action
   try {
-      await axios.delete(`${REACT_APP_BASE_URL}/deleteVehicles`,{vehicles}, {
+      await axios.delete(`${REACT_APP_BASE_URL}/deleteVehicles`,{imei: vehicles}, {
         headers: { "Content-Type": "application/json" },
       });
     
     // Make API call to delete the user
-    await axios.delete(`${REACT_APP_BASE_URL}/deleteUser/${userId}`, {
+    await axios.delete(`${REACT_APP_BASE_URL}/deleteUser/${_id}`, {
       headers: { "Content-Type": "application/json" },
     });
 
