@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-// import { users } from "../constants/users"; // Import the users data
 import {
     Table,
     TableBody,
@@ -9,18 +8,14 @@ import {
     TableRow,
     Paper,
     TableSortLabel,
-    IconButton, // For button actions
-    Tooltip, // For tooltips
-    Box, // For flexbox layout
+    IconButton, 
+    Tooltip, 
+    Box, 
     Dialog,
     DialogTitle,
     DialogContent,
     DialogActions,
-    Button,
-    // DialogContent,
-    // DialogActions,
-    // TextField,
-    // Button,
+    Button
 } from "@mui/material";
 import { AddCircle, Delete } from '@mui/icons-material'; // Icons for buttons
 import { deleteUser, getAllUsers } from "../utils/User/userUtils";
@@ -30,34 +25,31 @@ import { addVehicle } from "../utils/vehicle/vehicleUtils";
 const Dashboard = () => {
     const dispatch = useDispatch()
     const users  = useSelector((state) => state.user.allUsers);
-    //const userId = useSelector((state) => state.user.currentUser._id); 
 
     const [order, setOrder] = useState('asc'); // 'asc' or 'desc'
     const [orderBy, setOrderBy] = useState('userId'); // Default sorting by userId
     const [searchQuery, setSearchQuery] = useState(""); // State for search query
     const [loading, setLoading] = useState(true); // Loading state for data fetching
 
-     // const [userName, setUserName] = useState("");
-    const [ownerName, setOwnerName] = useState("");
-    const [custMobileNumber, setCustomerMobileNumber] = useState("");
-    const [imei, setImei] = useState("");
-    const [simNumber, setSimNumber] = useState("");
-    const [vehicleModel, setVehicleModel] = useState("");
-    const [vehicleRegistrationNumber, setVehicleRegistrationNumber] = useState("");
-
-    const [vehicleCount, setVehicleCount] = useState(0);
-
+    // const [ownerName, setOwnerName] = useState("");
+    // const [custMobileNumber, setCustomerMobileNumber] = useState("");
+    // const [imei, setImei] = useState("");
+    // const [simNumber, setSimNumber] = useState("");
+    // const [vehicleModel, setVehicleModel] = useState("");
+    // const [vehicleRegistrationNumber, setVehicleRegistrationNumber] = useState("");
+    const [vehicleData, setVehicleData] = useState({
+        ownerName: "",
+        custMobileNumber: "",
+        imei: "",
+        simNumber: "",
+        vehicleModel: "",
+        vehicleRegistrationNumber: "",
+    });
     const [openPopup, setOpenPopup] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState(null);
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
-    // const [vehicleData, setVehicleData] = useState({
-    //     ownerName,
-    //     vehicleModel,
-    //     vehicleRegistrationNumber,
-    //     custMobileNumber,
-    //     imei,
-    //     simNumber
-    // });
+    const [vehicleCount, setVehicleCount] = useState(0);
+    const [userDetails, setUserDetails] = useState(0);
 
     useEffect(() => {
         dispatch(getAllUsers()).finally(() => setLoading(false));
@@ -71,22 +63,17 @@ const Dashboard = () => {
 
     const handleClosePopup = () => {
         setOpenPopup(false);
-        // setVehicleData({
-        //     ownerName: "",
-        //     vehicleModel: "",
-        //     registrationNumber: "",
-        // });
+        setVehicleData({
+            ownerName: "",
+            custMobileNumber: "",
+            imei: "",
+            simNumber: "",
+            vehicleModel: "",
+            vehicleRegistrationNumber: "",
+        });
     };
 
     const handleSubmitVehicle = () => {
-        const vehicleData = {
-            ownerName,
-        vehicleModel,
-        vehicleRegistrationNumber,
-        custMobileNumber,
-        imei,
-        simNumber
-        }
         const newVehicle = {
             ...vehicleData,
             userId: selectedUserId,
@@ -98,20 +85,21 @@ const Dashboard = () => {
             catch(error){
               console.error("Error adding vehicle:", error);
             }
-        //handleClosePopup();
+        handleClosePopup();
     };
 
-   
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setVehicleData({ ...vehicleData, [name]: value });
+    };
 
 
     const headCells = [
         { id: "userId", label: "UserId" },
-        // { id: "gpsId", label: "GPS ID" },
         { id: "name", label: "Name" },
         { id: "mobile", label: "Mobile Number" },
          { id: "email", label: "Email Id" },
-        // { id: "status", label: "Status" },
-        { id: "actions", label: "Actions" }, // New column for action buttons
+        { id: "actions", label: "Actions" }, 
     ];
 
     // Sorting function
@@ -119,6 +107,16 @@ const Dashboard = () => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
+    };
+
+    const comparator = (a, b) => {
+        if (a[orderBy] < b[orderBy]) {
+            return order === 'asc' ? -1 : 1;
+        }
+        if (a[orderBy] > b[orderBy]) {
+            return order === 'asc' ? 1 : -1;
+        }
+        return 0;
     };
 
     // Sort function to compare data
@@ -132,51 +130,30 @@ const Dashboard = () => {
         return stabilizedArray?.map((el) => el[0]);
     };
 
-    const comparator = (a, b) => {
-        if (a[orderBy] < b[orderBy]) {
-            return order === 'asc' ? -1 : 1;
-        }
-        if (a[orderBy] > b[orderBy]) {
-            return order === 'asc' ? 1 : -1;
-        }
-        return 0;
-    };
-
     const sortedUsers = sortData(users, comparator);
 
     // Filter users based on search query
     const filteredUsers = sortedUsers?.filter((user) => {
         return (
             user._id.toString().includes(searchQuery.toLowerCase()) ||
-            //user.gpsId.toString().includes(searchQuery.toLowerCase()) ||
             user.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
             user.mobileNumber.toString().includes(searchQuery.toLowerCase()) ||
             user.email.toString().includes(searchQuery.toLowerCase()) 
-
-            // user.device.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            // user.status.toLowerCase().includes(searchQuery.toLowerCase())
         );
     });
 
-    // Handlers for actions
-    // const handleAddVehicle = (userId) => {
-    //     console.log(`Adding vehicle for user ${userId}`);
-    //     // Add logic to handle adding a vehicle
-    // };
-
-    const handleDeleteUser = (userId,vehicleCount) => {
-        setSelectedUserId(userId);
+    const handleDeleteUser = (user) => {
+        setUserDetails(user);
+        setSelectedUserId(user._id);
         setOpenConfirmDialog(true);
-        setVehicleCount(vehicleCount);
-        
+        setVehicleCount(user.vehicles?.length || 0);
     };
 
     const handleConfirmDelete = () => {
-        dispatch(deleteUser(selectedUserId));
+        dispatch(deleteUser(userDetails));
         setOpenConfirmDialog(false);
     };
 
-    const UserCount = filteredUsers && filteredUsers.length || 0;
     return (
         <div className="p-8 bg-[#eaecf8] h-full">
             <h1 className="text-3xl font-bold mb-6">Welcome to the Dashboard</h1>
@@ -187,7 +164,7 @@ const Dashboard = () => {
                 {/* Search Bar */}
                 <input
                     type="text"
-                    placeholder={`Search Users (${UserCount})`}
+                    placeholder={`Search Users (${filteredUsers?.length || 0})`}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="px-4 py-2 border rounded-lg outline-none text-black"
@@ -285,7 +262,7 @@ const Dashboard = () => {
                                     <Tooltip title="Delete User" arrow>
                                         <IconButton
                                             onClick={() => {
-                                                handleDeleteUser(user._id, user.vehicles?.length || 0);
+                                                handleDeleteUser(user);
                                             }}
                                             sx={{ color: 'red' }}
                                             aria-label="delete user"
@@ -302,15 +279,19 @@ const Dashboard = () => {
 
             <Dialog open={openPopup} onClose={handleClosePopup}>
                 <DialogTitle>Add Vehicle</DialogTitle>
-                <form onSubmit={handleSubmitVehicle} className="bg-white p-8 rounded shadow-lg space-y-6 ">
+                <form onSubmit={(e) => {
+                        e.preventDefault();
+                        handleSubmitVehicle();
+                    }} className="bg-white p-8 rounded shadow-lg space-y-6 ">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label className="block mb-2 text-sm font-semibold">Owner Name</label>
                         <input
                             type="text"
+                            name="ownerName"
                             placeholder="Owner Name"
-                            value={ownerName}
-                            onChange={(e) => setOwnerName(e.target.value)}
+                            value={vehicleData.ownerName}
+                            onChange={handleInputChange}
                             className="w-full px-4 py-2 border rounded"
                             required
                         />
@@ -319,9 +300,10 @@ const Dashboard = () => {
                         <label className="block mb-2 text-sm font-semibold">Customer Mobile Number</label>
                         <input
                             type="tel"
+                            name="custMobileNumber"
                             placeholder="Customer Mobile Number"
-                            value={custMobileNumber}
-                            onChange={(e) => setCustomerMobileNumber(e.target.value)}
+                            value={vehicleData.custMobileNumber}
+                            onChange={handleInputChange}
                             className="w-full px-4 py-2 border rounded"
                             required
                         />
@@ -330,9 +312,10 @@ const Dashboard = () => {
                         <label className="block mb-2 text-sm font-semibold">IMEI Number</label>
                         <input
                             type="text"
+                            name="imei"
                             placeholder="IMEI Number"
-                            value={imei}
-                            onChange={(e) => setImei(e.target.value)}
+                            value={vehicleData.imei}
+                            onChange={handleInputChange}
                             className="w-full px-4 py-2 border rounded"
                             required
                         />
@@ -341,9 +324,10 @@ const Dashboard = () => {
                         <label className="block mb-2 text-sm font-semibold">SIM Number</label>
                         <input
                             type="text"
+                            name="simNumber"
                             placeholder="SIM Number"
-                            value={simNumber}
-                            onChange={(e) => setSimNumber(e.target.value)}
+                            value={vehicleData.simNumber}
+                            onChange={handleInputChange}
                             className="w-full px-4 py-2 border rounded"
                             required
                         />
@@ -355,9 +339,10 @@ const Dashboard = () => {
                         <label className="block mb-2 text-sm font-semibold">Vehicle Model</label>
                         <input
                             type="text"
+                            name="vehicleModel"
                             placeholder="Vehicle Model"
-                            value={vehicleModel}
-                            onChange={(e) => setVehicleModel(e.target.value)}
+                            value={vehicleData.vehicleModel}
+                            onChange={handleInputChange}
                             className="w-full px-4 py-2 border rounded"
                             required
                         />
@@ -366,9 +351,10 @@ const Dashboard = () => {
                         <label className="block mb-2 text-sm font-semibold">Vehicle Model</label>
                         <input
                             type="text"
+                            name="vehicleRegistrationNumber"
                             placeholder="Vehicle Registeration Number"
-                            value={vehicleRegistrationNumber}
-                            onChange={(e) => setVehicleRegistrationNumber(e.target.value)}
+                            value={vehicleData.vehicleRegistrationNumber}
+                            onChange={handleInputChange}
                             className="w-full px-4 py-2 border rounded"
                             required
                         />

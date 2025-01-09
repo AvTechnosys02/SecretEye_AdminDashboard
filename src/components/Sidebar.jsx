@@ -39,8 +39,8 @@ const Sidebar = () => {
                         Add Users
                     </Link> */}
                     <Link
-                        to="/add-vehicles"
-                        className={`px-6 py-3 hover:bg-[#eaecf8] hover:text-black ${location.pathname === '/add-vehicles' ? 'bg-[#eaecf8] text-black' : ''}`}
+                        to="/view-vehicles"
+                        className={`px-6 py-3 hover:bg-[#eaecf8] hover:text-black ${location.pathname === '/view-vehicles' ? 'bg-[#eaecf8] text-black' : ''}`}
                     >
                         Vehicle List
                     </Link>

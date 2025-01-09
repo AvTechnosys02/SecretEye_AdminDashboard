@@ -52,9 +52,14 @@ export const getAllUsers = () => async(dispatch) => {
   }
 }
 
-export const deleteUser = (userId) => async (dispatch) => {
+export const deleteUser = (user) => async (dispatch) => {
+  const {vehicles,userId} = user;
   dispatch(authRequest()); // Dispatching request action
   try {
+      await axios.delete(`${REACT_APP_BASE_URL}/deleteVehicles`,{vehicles}, {
+        headers: { "Content-Type": "application/json" },
+      });
+    
     // Make API call to delete the user
     await axios.delete(`${REACT_APP_BASE_URL}/deleteUser/${userId}`, {
       headers: { "Content-Type": "application/json" },
