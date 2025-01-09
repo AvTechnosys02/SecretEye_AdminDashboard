@@ -176,6 +176,7 @@ const Dashboard = () => {
         setOpenConfirmDialog(false);
     };
 
+    const UserCount = filteredUsers && filteredUsers.length || 0;
     return (
         <div className="p-8 bg-[#eaecf8] h-full">
             <h1 className="text-3xl font-bold mb-6">Welcome to the Dashboard</h1>
@@ -186,7 +187,7 @@ const Dashboard = () => {
                 {/* Search Bar */}
                 <input
                     type="text"
-                    placeholder="Search Users"
+                    placeholder={`Search Users (${UserCount})`}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="px-4 py-2 border rounded-lg outline-none text-black"

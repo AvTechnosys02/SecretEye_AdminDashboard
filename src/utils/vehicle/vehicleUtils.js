@@ -13,8 +13,8 @@ import {
 //   "https://vahantrack.com/api/api.php?api=user&ver=1.0&key=E161C96F1AD1FD8AC0617271B2F74924&cmd=";
 
 const REACT_APP_BASE_URL =
-  import.meta.env.VITE_BASE_URL ||
-  "https://secret-eye-be-4d14.vercel.app";
+  import.meta.env.VITE_BASE_URL || "https://secret-eye-be-4d14.vercel.app";
+  // "https://secret-eye-be-4d14.vercel.app";
 // //"http://localhost:5000";
 // // "http://127.0.0.1:5000"
 // // http://192.168.64.88:5000

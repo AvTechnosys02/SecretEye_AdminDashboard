@@ -90,6 +90,8 @@ const AddVehiclesPage = () => {
         XLSX.utils.book_append_sheet(workbook, worksheet, "Vehicles");
         XLSX.writeFile(workbook, "vehicles_data.xlsx");
     };
+    const vehicleCount = filteredVehicles && filteredVehicles.length || 0;
+
 
     return (
         <div className="flex flex-col p-8 bg-[#eaecf8] h-full">
@@ -99,7 +101,7 @@ const AddVehiclesPage = () => {
                 {/* Search Bar */}
                 <input
                     type="text"
-                    placeholder="Search Vehicle"
+                    placeholder={`Search Vehicle (${vehicleCount})`}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="px-4 py-2 border rounded-lg outline-none text-black"
