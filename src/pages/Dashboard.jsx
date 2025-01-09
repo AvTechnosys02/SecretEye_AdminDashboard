@@ -348,7 +348,7 @@ const Dashboard = () => {
                         />
                     </div>
                     <div>
-                        <label className="block mb-2 text-sm font-semibold">Vehicle Model</label>
+                        <label className="block mb-2 text-sm font-semibold">Vehicle Registration Number</label>
                         <input
                             type="text"
                             name="vehicleRegistrationNumber"
