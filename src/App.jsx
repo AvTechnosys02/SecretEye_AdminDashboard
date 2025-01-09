@@ -17,7 +17,7 @@ function App() {
         {/* Use Layout for routes that need the sidebar */}
         <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
         <Route path="/add-users" element={<Layout><AddUsersPage /></Layout>} />
-        <Route path="/add-vehicles" element={<Layout><AddVehiclesPage /></Layout>} />
+        <Route path="/view-vehicles" element={<Layout><AddVehiclesPage /></Layout>} />
       </Routes>
     </Router>
   );
