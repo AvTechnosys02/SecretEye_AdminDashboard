@@ -7,6 +7,13 @@ import { vehicleReducer } from './vehicle/vehicleSlice';
 // // "http://127.0.0.1:5000"
 // // http://192.168.64.88:5000
 
+export const REACT_APP_BASE_URL =
+  import.meta.env.VITE_BASE_URL || "http://127.0.0.1:5000";
+
+// "http://127.0.0.1:5000"
+// http://192.168.64.88:5000
+// https://secret-eye-be-4d14.vercel.app/
+
 export const store = configureStore({
     reducer: {
         user: userReducer,

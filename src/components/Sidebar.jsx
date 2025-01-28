@@ -32,12 +32,6 @@ const Sidebar = () => {
                     >
                         Dashboard
                     </Link>
-                    {/* <Link
-                        to="/add-users"
-                        className={`px-6 py-3 hover:bg-[#eaecf8] hover:text-black ${location.pathname === '/add-users' ? 'bg-[#eaecf8] text-black' : ''}`}
-                    >
-                        Add Users
-                    </Link> */}
                     <Link
                         to="/view-vehicles"
                         className={`px-6 py-3 hover:bg-[#eaecf8] hover:text-black ${location.pathname === '/view-vehicles' ? 'bg-[#eaecf8] text-black' : ''}`}
@@ -45,10 +39,10 @@ const Sidebar = () => {
                         Vehicle List
                     </Link>
                     <Link
-                        to="/add-users"
-                        className={`px-6 py-3 hover:bg-[#eaecf8] hover:text-black ${location.pathname === '/add-users' ? 'bg-[#eaecf8] text-black' : ''}`}
+                        to="/vehicle-track"
+                        className={`px-6 py-3 hover:bg-[#eaecf8] hover:text-black ${location.pathname === '/vehicle-track' ? 'bg-[#eaecf8] text-black' : ''}`}
                     >
-                        Add Users
+                        Map
                     </Link>
                     
                 </nav>
