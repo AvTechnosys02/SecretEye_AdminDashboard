@@ -1,34 +1,54 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { GoogleMap, useJsApiLoader, Polyline } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, Polyline, Marker } from "@react-google-maps/api";
+import axios from "axios";
 
 const TrackDetails = () => {
   const { imei } = useParams();
-  const [path, setpath] = useState([]);
+  // const [path, setpath] = useState([]);
   const { isLoaded } = useJsApiLoader({
-    googleMapApiKey: import.meta.env.VITE_GOOGLE_MAP_API_KEY,
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAP_API_KEY,
   });
 
-  const addPointToPath = (e) => {
-    try {
-      const latlng = { lat: e.latlng.lat(), lng: e.latlng.lng() };
-      setpath(...path,latlng)
-    } catch (error) {
-      console.error("addpoint", error);
+  const [location, setLocation] = useState(null);
+
+  useEffect(()=>{
+    async function getLatLon(){
+      const response = await axios.post(`http://localhost:5000/getVehicleLocation`,{
+        imeiIds: imei
+      });
+
+      console.log(response.data[0]);
+      const location = {
+        lat: response.data[0].lat,
+        lng: response.data[0].lng
+      }
+      setLocation(location);
     }
+    getLatLon();
+  },[imei]);
+
+  const containerStyle = {
+    width: '100%',
+    height: '800px',
   };
+
   return (
     <div>
       <h1>Tracking Vehicle with IMEI: {imei}</h1>
       {/* Add vehicle tracking details here */}
-      {isLoaded && 
-      <GoogleMap
-        mapContainerStyle={{ width: "100%", height: "800px" }}
-        center={{ lat: 40.4093, lng: 49.8671 }}
-        zoom={10}
-      >
-        <Polyline path={path} options={{strokeColor:"#FF0000"}}></Polyline>
-      </GoogleMap>}
+      {isLoaded && location && (
+        <GoogleMap
+          mapContainerStyle={containerStyle}
+          center={location}
+          zoom={13}
+        >
+          {/* Add a Marker to display the vehicle location */}
+          <Marker position={location} />
+          {/* Optionally, you can also draw a polyline if you have a path */}
+          {/* <Polyline path={path} options={{strokeColor:"#FF0000"}} /> */}
+        </GoogleMap>
+      )}
     </div>
   );
 };

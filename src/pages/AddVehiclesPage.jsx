@@ -21,6 +21,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
+import { Download } from "lucide-react";
 
 const AddVehiclesPage = () => {
   const dispatch = useDispatch();
@@ -44,13 +45,14 @@ const AddVehiclesPage = () => {
   };
 
   const handleConfirmDelete = () => {
+    console.log(selectedVehicleId);
     dispatch(deleteVehicle(selectedVehicleId));
     setOpenConfirmDialog(false);
   };
 
   const headCells = [
-    { id: "vehicleRegistrationNumber", label: "Vehicle Registration Number" },
     { id: "ownerName", label: "Owner Name" },
+    { id: "vehicleRegistrationNumber", label: "Vehicle Registration Number" },
     { id: "custMobileNumber", label: "Customer Mobile Number" },
     { id: "imei", label: "IMEI" },
     { id: "simNumber", label: "SIM Number" },
@@ -128,49 +130,50 @@ const AddVehiclesPage = () => {
   const vehicleCount = (filteredVehicles && filteredVehicles.length) || 0;
 
   return (
-    <div className="flex flex-col p-8 bg-[#eaecf8] h-full">
+    <div className="flex px-4 font-raleway  rounded-md flex-col pt-4 bg-gray-50 border-2 h-full">
       <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
-        mb={4}
-        className="bg-[#FFB74D] p-2 text-white rounded-xl"
+        className=" pb-2 mb-4 text-black border-b px-4 "
       >
-        <h2 className="text-2xl font-semibold">Vehicle List</h2>
+        <h2 className="text-3xl font-semibold">Vehicle List</h2>
         {/* Search Bar */}
-        <input
-          type="text"
-          placeholder={`Search Vehicle (${vehicleCount})`}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="px-4 py-2 border rounded-lg outline-none text-black"
-          style={{
-            width: "300px",
-            borderColor: "#B0BEC5",
-            borderRadius: "4px",
-            backgroundColor: "#fff",
-          }}
-        />
+        <div className=" flex items-center gap-4">
+          <input
+            type="text"
+            placeholder={`Search Vehicle (${vehicleCount})`}
+            // placeholder={`Search by IMEI`}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="px-4  py-2 bg-gray-50 rounded-md border outline-none text-black"
+          />
+          <button onClick={handleExportToExcel} className=" py-2 px-4 flex items-center gap-2 cursor-pointer hover:bg-green-700 duration-200 font-semibold text-center text-white bg-green-600 rounded-md" >
+            <p>Export to Excel</p>
+            <Download size={18} />
+          </button>
+        </div>
       </Box>
 
       <TableContainer
         component={Paper}
         sx={{
-          maxHeight: 600,
+          // maxHeight: "76vh",
           boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-          borderRadius: "10px",
+          // borderRadius: "10px",
         }}
       >
         <Table
           sx={{
             minWidth: 650,
             backgroundColor: "#f9fafb",
+            height: "100%",
           }}
           stickyHeader
           aria-label="Vehicle table"
         >
           <TableHead>
-            <TableRow>
+            <TableRow >
               {headCells.map((headCell) => (
                 <TableCell
                   key={headCell.id}
@@ -213,19 +216,21 @@ const AddVehiclesPage = () => {
                     "&:nth-of-type(even)": {
                       backgroundColor: "#e5e7eb",
                     },
-                    "&:hover": {
-                      backgroundColor: "#d1d5db",
-                      cursor: "pointer",
-                    },
+                    // "&:hover": {
+                    //   backgroundColor: "#e5e7eb",
+                    //   cursor: "pointer",
+                    // },
                   }}
                 >
-                  <TableCell>{vehicle.vehicleRegistrationNumber}</TableCell>
-                  <TableCell>{vehicle.ownerName}</TableCell>
-                  <TableCell>{vehicle.custMobileNumber}</TableCell>
-                  <TableCell>{vehicle.imei}</TableCell>
-                  <TableCell>{vehicle.simNumber}</TableCell>
-                  <TableCell>{vehicle.vehicleModel}</TableCell>
-                  <TableCell>
+                  <TableCell sx={{ py: 1 }}>
+                    <p className=" text-base font-medium" >{vehicle.ownerName}</p>
+                  </TableCell>
+                  <TableCell sx={{ py: 1 }}>{vehicle.vehicleRegistrationNumber}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{vehicle.custMobileNumber}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{vehicle.imei}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{vehicle.simNumber}</TableCell>
+                  <TableCell sx={{ py: 1 }}>{vehicle.vehicleModel}</TableCell>
+                  <TableCell sx={{ py: 1 }}>
                     {/* Action Buttons */}
                     <Tooltip title="Delete Vehicle" arrow>
                       <IconButton
@@ -245,12 +250,6 @@ const AddVehiclesPage = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <button
-        onClick={handleExportToExcel}
-        className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-      >
-        Export to Excel
-      </button>
       <Dialog
         open={openConfirmDialog}
         onClose={() => setOpenConfirmDialog(false)}

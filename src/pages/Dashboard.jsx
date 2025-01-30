@@ -1,15 +1,6 @@
 import { useEffect, useState } from "react";
+import dashboardBg from "../assets/dashboard-bg.svg";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TableSortLabel,
-  IconButton,
-  Tooltip,
   Box,
   Dialog,
   DialogTitle,
@@ -18,32 +9,42 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
-import {
-  AddCircle,
-  Delete,
-  KeyboardArrowDown,
-  KeyboardArrowUp,
-} from "@mui/icons-material"; // Icons for buttons
 import { addUser, deleteUser, getAllUsers } from "../utils/User/userUtils";
 import { useDispatch, useSelector } from "react-redux";
-import { addVehicle } from "../utils/vehicle/vehicleUtils";
+import { addVehicle, getAllVehicles } from "../utils/vehicle/vehicleUtils";
+import { Car, CarTaxiFront, Plus, User, Users } from "lucide-react";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
   const users = useSelector((state) => state.user.allUsers);
-
+  // Total count
+  const vehicles = useSelector((state) => state.vehicle.vehicleList);
+  const totalVehicleCount = vehicles?.length;
+  const activeVechileCount  = vehicles?.filter((vehicle) => vehicle.location).length
+  const dashboardHeaderData = [
+    {
+      name: "Total User",
+      count: users.length,
+      Icon: Users,
+    },
+    {
+      name: "Total Vehicle",
+      count: totalVehicleCount,
+      Icon: Car,
+    }, {
+      name: "Total Active Vehicle",
+      count: activeVechileCount,
+      Icon: CarTaxiFront,
+    }
+  ]
+  // console.log("vehicles", vehicles.length);
   const [order, setOrder] = useState("asc"); // 'asc' or 'desc'
   const [orderBy, setOrderBy] = useState("userId"); // Default sorting by userId
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const [loading, setLoading] = useState(true); // Loading state for data fetching
   const [expandedRows, setExpandedRows] = useState([]);
+  const [selectedCard, setSelectedCard] = useState(null);
 
-  // const [ownerName, setOwnerName] = useState("");
-  // const [custMobileNumber, setCustomerMobileNumber] = useState("");
-  // const [imei, setImei] = useState("");
-  // const [simNumber, setSimNumber] = useState("");
-  // const [vehicleModel, setVehicleModel] = useState("");
-  // const [vehicleRegistrationNumber, setVehicleRegistrationNumber] = useState("");
   const [vehicleData, setVehicleData] = useState({
     ownerName: "",
     custMobileNumber: "",
@@ -70,6 +71,10 @@ const Dashboard = () => {
   useEffect(() => {
     dispatch(getAllUsers()).finally(() => setLoading(false));
   }, [dispatch]);
+
+   useEffect(() => {
+      dispatch(getAllVehicles()).finally(() => setLoading(false));
+    }, [dispatch]);
 
   const handleAddVehicle = (userId) => {
     setSelectedUserId(userId);
@@ -159,15 +164,6 @@ const Dashboard = () => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
-
-  //   const handleRowClick = (userId) => {
-  //     setExpandedRows((prevExpandedRows) =>
-  //       prevExpandedRows.includes(userId)
-  //         ? prevExpandedRows.filter((id) => id !== userId)
-  //         : [...prevExpandedRows, userId]
-  //     );
-  //   };
-
   const headCells = [
     { id: "userId" },
     { id: "name", label: "Name" },
@@ -236,43 +232,98 @@ const Dashboard = () => {
     );
   };
 
+  const handleShowUserDetails = (userData) => {
+    setSelectedCard(userData);
+  }
+
   return (
-    <div className="p-8 bg-[#eaecf8] h-full">
-      <h1 className="text-3xl font-bold mb-6">Welcome to the Dashboard</h1>
+    <div className=" bg-white font-raleway border-2 flex flex-col gap-2 rounded-lg h-full">
+      <h1 className=" text-gray-600 py-3 px-4 border-b border-gray-300 w-full font-medium ">Dashboard</h1>
 
       {/* Title and Search Bar Row */}
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={4}
-        className="bg-[#FFB74D] p-2 text-white rounded-xl"
-      >
-        <h2 className="text-2xl font-semibold">Users List</h2>
-        <view display="flex-row">
-          <button
-            onClick={handleAddUser}
-            className="px-[20%] py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
-          >
-            Add User
-          </button>
-          <input
-            type="text"
-            placeholder={`Search Users (${filteredUsers?.length || 0})`}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="px-4 py-2 border rounded-lg outline-none text-black"
-            style={{
-              width: "300px",
-              borderColor: "#B0BEC5",
-              borderRadius: "4px",
-              backgroundColor: "#fff",
-            }}
-          />
-        </view>
+      <p className=" px-4 text-lg font-semibold py-2 pb-3">Statistics</p>
+      <Box className="flex flex-col  md:flex-row px-4 gap-4 justify-between pb-3 items-center" >
+        {
+          dashboardHeaderData.map((data) => {
+
+            return <Box className=" bg-gray-50 flex flex-col gap-0 pt-4 pb-6  w-full px-4 border rounded-xl" >
+              <div className=" size-10 p-2 bg-orange-100 text-orange-700 rounded-lg" >
+                <data.Icon />
+              </div>
+              <p className=" text-gray-600 mt-6 font-medium">{data.name}</p>
+              <p className=" text-2xl font-semibold" >{data.count}</p>
+            </Box>
+          })
+        }
+
+        <Box onClick={handleAddUser} className=" group bg-gray-50 hover:bg-gray-100 duration-200 cursor-pointer flex flex-col py-4 gap-6 h-40 w-full px-4 border rounded-xl" >
+          <div className=" w-full justify-between flex gap-4 items-center" >
+            <p className=" text-gray-800 mt-2 text-3xl font-semibold duration-300">Add user</p>
+            <div className=" group-hover:scale-125 duration-300 size-10 p-2 bg-green-100 text-green-700 rounded-lg" >
+              <Plus />
+            </div>
+          </div>
+          <p className=" text-gray-500" >Add a new user and the add the IMEI number of the vehicle</p>
+        </Box>
+      </Box>
+      <Box className=" md:px-4 border-t ">
+        <Box
+          className=" flex-col flex md:flex-row gap-4 mb-4 h-full py-4 px-4 w-full"
+        >
+          <Box className=" w-full max-w-md rounded-md flex flex-col gap-2 px-0">
+            <Box className="flex items-center gap-2" >
+              <input
+                type="text"
+                placeholder={`Search Users (${filteredUsers?.length || 0})`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="px-4 py-2 border rounded-lg outline-none text-black w-full bg-gray-50"
+              />
+              {/* <button
+                
+                className="px-4 py-2 whitespace-nowrap font-semibold text-white bg-blue-600 rounded hover:bg-blue-700"
+              >
+                Add User
+              </button> */}
+            </Box>
+            {
+              filteredUsers.map((data, idx) => {
+                const index = Number(idx) > 8 ? (idx + 1) : ("0" + (Number(idx) + 1));
+                return <Box onClick={() => handleShowUserDetails(data)} className=" w-full cursor-pointer rounded-md border flex flex-col gap-1  bg-gray-50 p-4">
+                  <p>{index}</p>
+                  <p className=" font-semibold text-lg capitalize" >{data.userName}</p>
+                  <p className=" text-gray-600 text-sm ">{data.mobileNumber}</p>
+                  <p className=" text-gray-600 text-sm  -mt-1 mb-3">{data.email}</p>
+                  <div className=" w-full flex gap-4">
+                    <button onClick={() => handleDeleteUser(data)} className=" w-full rounded-md border bg-red-50 text-red-700 font-semibold px-3 cursor-pointer border-red-400 py-2.5 text-center">Delete</button>
+                    <button onClick={() => handleAddVehicle(data)} className=" w-full rounded-md border bg-green-600 whitespace-nowrap px-3 text-white font-semibold cursor-pointer border-green-700 py-2.5 text-center">Add new Vehicle</button>
+                  </div>
+                </Box>
+              })
+            }
+          </Box>
+          <Box className=" w-full flex gap-3 flex-col h-full rounded-md  md:px-4" >
+            {
+              selectedCard ? <>
+                <p className=" text-2xl md:text-4xl font-semibold capitalize" >{selectedCard?.userName}</p>
+                <Box className=" overflow-y-scroll w-full sticky top-2 max-h-screen flex gap-1 flex-col">
+                  {
+                    selectedCard?.vehicles.map((data) => {
+                      return <ImeiCard data={data} />
+                    })
+                  }
+                </Box>
+              </> : <div className=" text-4xl text-gray-400 mt-8 text-center flex items-center justify-center font-bold">
+                <img src={dashboardBg} className=" w-2/3  h-auto mx-auto" alt="" />
+              </div>
+            }
+
+          </Box>
+        </Box>
       </Box>
 
-      <TableContainer
+
+      {/* <TableContainer
         component={Paper}
         sx={{
           maxHeight: 600,
@@ -398,7 +449,7 @@ const Dashboard = () => {
             )}
           </TableBody>
         </Table>
-      </TableContainer>
+      </TableContainer> */}
 
       <Dialog open={openPopup} onClose={handleClosePopup}>
         <DialogTitle>Add Vehicle</DialogTitle>
@@ -547,7 +598,9 @@ const Dashboard = () => {
                 </DialogActions> */}
       </Dialog>
       <Dialog open={openUserPopup} onClose={handleCloseUserPopup}>
-        <DialogTitle>Add User</DialogTitle>
+        <DialogTitle>
+          <p className=" text-2xl font-semibold">Add User</p>
+        </DialogTitle>
         <form
           onSubmit={handleAddUserData}
           className="bg-white p-8 rounded shadow-lg space-y-6"
@@ -614,7 +667,7 @@ const Dashboard = () => {
             ) : (
               <button
                 type="submit"
-                className="px-[20%] py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+                className="px-4 py-2 text-white duration-200 font-semibold bg-blue-600 rounded w-full hover:bg-blue-700"
               >
                 Add User
               </button>
@@ -689,3 +742,20 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+function ImeiCard({ data }) {
+  const [isCopied, setIsCopied] = useState(false);
+  function handleCopy() {
+    setIsCopied(true);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 2000);
+    navigator.clipboard.writeText(data);
+  }
+  return (
+    <Box onClick={() => handleCopy()} className=" w-full cursor-pointer rounded-md border flex flex-col gap-1  bg-gray-50 p-4">
+      <p className=" text-gray-600 text-sm ">{isCopied ? "Copied!" : data}</p>
+    </Box>
+  )
+}
+

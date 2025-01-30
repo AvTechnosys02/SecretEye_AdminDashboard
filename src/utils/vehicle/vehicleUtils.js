@@ -90,14 +90,17 @@ export const getSVehicles = (vehicleId) => async (dispatch) => {
 };
 
 export const deleteVehicle = (vehicleId) => async (dispatch) => {
+  console.log("inside api call")
   dispatch(getRequest()); // Dispatching request action
   try {
+    console.log( "vechile ID" + vehicleId)
     const vehicleResponse = await axios.get(`${REACT_APP_BASE_URL}/getVehicle/${vehicleId}`);
+    console.log("vechile data" + JSON.stringify(vehicleResponse.data))
     const { imei, _id } = vehicleResponse.data;
 
     // Remove the IMEI ID from the user's vehicle list
     await axios.put(`${REACT_APP_BASE_URL}/updateUser/${_id}`, {
-      $pull: { imei: imei },
+      imei: imei
     }, {
       headers: { "Content-Type": "application/json" },
     });

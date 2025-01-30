@@ -19,7 +19,6 @@ function App() {
         <Route path="/vehicle-track" element={<Layout><VehicleTrack /></Layout>} />
         <Route path="/view-vehicles" element={<Layout><AddVehiclesPage /></Layout>} />
         <Route path="/trackvehicle/:imei" element={<Layout><TrackDetails /></Layout>} />
-
       </Routes>
     </Router>
   );

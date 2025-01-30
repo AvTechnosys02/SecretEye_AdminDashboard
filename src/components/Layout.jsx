@@ -8,7 +8,7 @@ const Layout = ({ children }) => {
     <div className="flex">
       <Sidebar />
       <div className="flex-1">
-        <main>{children}</main>
+        <main className=" h-full bg-primary p-4" >{children}</main>
       </div>
     </div>
   );
