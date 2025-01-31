@@ -7,17 +7,18 @@ import {
   stuffDone,
   getAllvehicles,
 } from "./vehicleSlice";
+import { REACT_APP_BASE_URL } from "../store";
 //import {REACT_APP_BASE_URL} from "../store"
 
 // const VEHICLE_BASE_DATA_URL =
 //   "https://vahantrack.com/api/api.php?api=user&ver=1.0&key=E161C96F1AD1FD8AC0617271B2F74924&cmd=";
 
-const REACT_APP_BASE_URL =
-  import.meta.env.VITE_BASE_URL || "https://secret-eye-be-4d14.vercel.app";
-  // "https://secret-eye-be-4d14.vercel.app";
-// //"http://localhost:5000";
-// // "http://127.0.0.1:5000"
-// // http://192.168.64.88:5000
+// const REACT_APP_BASE_URL =
+//   import.meta.env.VITE_BASE_URL || "https://secret-eye-be-4d14.vercel.app";
+//   // "https://secret-eye-be-4d14.vercel.app";
+// // //"http://localhost:5000";
+// // // "http://127.0.0.1:5000"
+// // // http://192.168.64.88:5000
 
 // export const fetchVehiclesIdofSUser = async (userId) => {
 //   try {
@@ -89,14 +90,17 @@ export const getSVehicles = (vehicleId) => async (dispatch) => {
 };
 
 export const deleteVehicle = (vehicleId) => async (dispatch) => {
+  console.log("inside api call")
   dispatch(getRequest()); // Dispatching request action
   try {
+    console.log( "vechile ID" + vehicleId)
     const vehicleResponse = await axios.get(`${REACT_APP_BASE_URL}/getVehicle/${vehicleId}`);
+    console.log("vechile data" + JSON.stringify(vehicleResponse.data))
     const { imei, _id } = vehicleResponse.data;
 
     // Remove the IMEI ID from the user's vehicle list
     await axios.put(`${REACT_APP_BASE_URL}/updateUser/${_id}`, {
-      $pull: { imei: imei },
+      imei: imei
     }, {
       headers: { "Content-Type": "application/json" },
     });

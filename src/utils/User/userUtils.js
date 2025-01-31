@@ -6,10 +6,11 @@ import {
   authError,
   userAdded,
 } from "./userSlice";
+import { REACT_APP_BASE_URL } from "../store";
 // import {REACT_APP_BASE_URL} from "../store"
 
-const REACT_APP_BASE_URL =
-  import.meta.env.VITE_BASE_URL || "https://secret-eye-be-4d14.vercel.app";
+// const REACT_APP_BASE_URL =
+//   import.meta.env.VITE_BASE_URL || "https://secret-eye-be-4d14.vercel.app";
 
 // "http://127.0.0.1:5000"
 // http://192.168.64.88:5000
@@ -25,7 +26,8 @@ export const addUser = (newUser) => async (dispatch) => {
     }); // Adjust the URL as needed
     if (result.data) {
       dispatch(userAdded(result.data));
-    }  else {
+      dispatch(getAllUsers());
+    } else {
       dispatch(authFailed(result.data.message));
     }
   } catch (error) {
@@ -33,8 +35,7 @@ export const addUser = (newUser) => async (dispatch) => {
   }
 };
 
-
-export const getAllUsers = () => async(dispatch) => {
+export const getAllUsers = () => async (dispatch) => {
   dispatch(authRequest()); // Dispatching request action
   try {
     // Make API call to fetch users
@@ -50,17 +51,23 @@ export const getAllUsers = () => async(dispatch) => {
   } catch (error) {
     dispatch(authError(error.message));
   }
-}
+};
 
 export const deleteUser = (user) => async (dispatch) => {
-  const {vehicles,_id } = user;
+  const { vehicles, _id } = user;
   console.log(vehicles);
   dispatch(authRequest()); // Dispatching request action
+
   try {
-      await axios.delete(`${REACT_APP_BASE_URL}/deleteVehicles`,{imei: vehicles}, {
-        headers: { "Content-Type": "application/json" },
-      });
-    
+    if (vehicles.length > 0) {
+      await axios.delete(
+        `${REACT_APP_BASE_URL}/deleteVehicles`,
+        { imei: vehicles },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
     // Make API call to delete the user
     await axios.delete(`${REACT_APP_BASE_URL}/deleteUser/${_id}`, {
       headers: { "Content-Type": "application/json" },
