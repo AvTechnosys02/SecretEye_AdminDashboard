@@ -147,9 +147,11 @@ const AddVehiclesPage = () => {
     if (emailHash && passHash) {
       const isMatch = bcrypt.compareSync(import.meta.env.VITE_ADMIN_EMAIL, emailHash) && bcrypt.compareSync(import.meta.env.VITE_ADMIN_PASSWORD, passHash);
       if (!isMatch) {
+        console.log("hash not match")
         navigate("/");
       }
-    } else {
+    }else{
+      console.log("no hash")
       navigate("/")
     }
   }, [])
