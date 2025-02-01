@@ -13,6 +13,8 @@ import { addUser, deleteUser, getAllUsers } from "../utils/User/userUtils";
 import { useDispatch, useSelector } from "react-redux";
 import { addVehicle, getAllVehicles } from "../utils/vehicle/vehicleUtils";
 import { Car, CarTaxiFront, Plus, User, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import bcrypt from "bcryptjs";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -235,6 +237,23 @@ const Dashboard = () => {
   const handleShowUserDetails = (userData) => {
     setSelectedCard(userData);
   }
+
+
+  // Verify Login
+  const navigate = useNavigate();
+  useEffect(() => {
+    const emailHash = localStorage.getItem("emailHash");
+    const passHash = localStorage.getItem("passHash");
+
+    if (emailHash && passHash) {
+      const isMatch = bcrypt.compareSync(import.meta.env.VITE_ADMIN_EMAIL, emailHash) && bcrypt.compareSync(import.meta.env.VITE_ADMIN_PASSWORD, passHash);
+      if (!isMatch) {
+        navigate("/");
+      }
+    }else{
+      navigate("/")
+    }
+  },[])
 
   return (
     <div className=" bg-white font-raleway border-2 flex flex-col gap-2 rounded-lg h-full">

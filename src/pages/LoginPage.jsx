@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import bcrypt from 'bcryptjs'
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");
@@ -9,8 +10,16 @@ const LoginPage = () => {
     const handleLogin = (e) => {
         e.preventDefault();
 
-        // Mock login logic for demonstration
-        if (email === "admin@gmail.com" && password === "admin123") {
+        if (email === import.meta.env.VITE_ADMIN_EMAIL && password === import.meta.env.VITE_ADMIN_PASSWORD) {
+            const emailHash = bcrypt.hashSync(email,10);
+            const passHash = bcrypt.hashSync(password,10);
+
+            localStorage.setItem("emailHash", emailHash);
+            localStorage.setItem("passHash", passHash);
+            const hash = bcrypt.hashSync(email, 10);
+            console.log(bcrypt.compareSync(email, hash))
+
+
             // Simulate a successful login
             alert("Login successful!");
             navigate("/dashboard"); // Redirect to the dashboard

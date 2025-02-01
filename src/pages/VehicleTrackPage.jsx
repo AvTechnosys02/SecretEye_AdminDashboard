@@ -10,6 +10,7 @@ import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import axios from "axios";
 import { Search, Send } from "lucide-react";
 import { getLatLon, getVehicleLocationData } from "../utils/vehicleLocation/vehicleLocationUtils";
+import bcrypt from "bcryptjs";
 
 
 const TrackVehicle = () => {
@@ -144,9 +145,31 @@ const TrackVehicle = () => {
   };
 
 
+  // Verify Login
+  useEffect(() => {
+    const localHash = localStorage.getItem("token");
+
+    if (!localHash) {
+      navigate("/");
+    }
+
+    const emailHash = localStorage.getItem("emailHash");
+    const passHash = localStorage.getItem("passHash");
+
+    if (emailHash && passHash) {
+      const isMatch = bcrypt.compareSync(import.meta.env.VITE_ADMIN_EMAIL, emailHash) && bcrypt.compareSync(import.meta.env.VITE_ADMIN_PASSWORD, passHash);
+      if (!isMatch) {
+        navigate("/");
+      }
+    } else {
+      navigate("/")
+    }
+  }, [])
+
+
   return (
     <div className="flex flex-col p-8 bg-white border-2 rounded-md h-full">
-      <Box className="flex gap-4 w-full py-4" >
+      <Box className="flex flex-col md:flex-row gap-4 w-full py-4" >
         <Box className=" flex h-[80vh] pr-2 overflow-y-scroll flex-col w-full gap-2 max-w-lg" >
           <Box className=" border bg-white mb-2 rounded-md px-3 py-1 flex items-center gap-2" >
             <Search color="#666" size={18} />
@@ -166,7 +189,7 @@ const TrackVehicle = () => {
           </Box>
           {
             filteredVehicles.map((data, idx) => {
-              return <Box className=" flex w-full items-center gap-2 justify-between py-2 px-4 border border-orange-100 bg-gray-50 rounded-md " >
+              return <Box className=" flex w-full flex-col md:flex-row md:items-center gap-2 justify-between py-2 px-4 border border-orange-100 bg-gray-50 rounded-md " >
                 <Box key={idx} className=" flex gap-1 flex-col" >
                   <p className=" font-bold text-lg" >{data.vehicleRegistrationNumber}</p>
                   <p className=" text-sm text-gray-600" >{data.imei}</p>
@@ -176,7 +199,7 @@ const TrackVehicle = () => {
                     // setImei(data.imei)
                     handleGetLocation(data.imei);
                   }}
-                  className=" flex items-center hover:bg-orange-100 hover:text-orange-700 gap-2 border px-2 py-1.5 rounded-md ml-auto "
+                  className=" flex hover:bg-orange-100 hover:text-orange-700 gap-2 border px-2 py-1.5 rounded-md items-center md:ml-auto "
                 >
                   <Send size={18} />
                   <p>Get on map</p>
