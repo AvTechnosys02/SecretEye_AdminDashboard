@@ -22,6 +22,8 @@ import {
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import { Download } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import bcrypt from "bcryptjs";
 
 const AddVehiclesPage = () => {
   const dispatch = useDispatch();
@@ -128,6 +130,29 @@ const AddVehiclesPage = () => {
   };
 
   const vehicleCount = (filteredVehicles && filteredVehicles.length) || 0;
+
+
+  // Verify Login
+  const navigate = useNavigate();
+  useEffect(() => {
+    const localHash = localStorage.getItem("token");
+
+    if (!localHash) {
+      navigate("/");
+    }
+
+    const emailHash = localStorage.getItem("emailHash");
+    const passHash = localStorage.getItem("passHash");
+
+    if (emailHash && passHash) {
+      const isMatch = bcrypt.compareSync(import.meta.env.VITE_ADMIN_EMAIL, emailHash) && bcrypt.compareSync(import.meta.env.VITE_ADMIN_PASSWORD, passHash);
+      if (!isMatch) {
+        navigate("/");
+      }
+    } else {
+      navigate("/")
+    }
+  }, [])
 
   return (
     <div className="flex px-4 font-raleway  rounded-md flex-col pt-4 bg-gray-50 border-2 h-full">

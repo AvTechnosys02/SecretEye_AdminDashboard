@@ -14,6 +14,8 @@ const Sidebar = () => {
 
     const confirmLogout = () => {
         setShowLogoutModal(false);  // Close modal
+        localStorage.removeItem('emailHash');
+        localStorage.removeItem('passHash');
         navigate('/');  // Redirect to login page
     };
 
