@@ -147,12 +147,6 @@ const TrackVehicle = () => {
 
   // Verify Login
   useEffect(() => {
-    const localHash = localStorage.getItem("token");
-
-    if (!localHash) {
-      navigate("/");
-    }
-
     const emailHash = localStorage.getItem("emailHash");
     const passHash = localStorage.getItem("passHash");
 

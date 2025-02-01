@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import bcrypt from 'bcryptjs'
 
@@ -11,8 +11,8 @@ const LoginPage = () => {
         e.preventDefault();
 
         if (email === import.meta.env.VITE_ADMIN_EMAIL && password === import.meta.env.VITE_ADMIN_PASSWORD) {
-            const emailHash = bcrypt.hashSync(email,10);
-            const passHash = bcrypt.hashSync(password,10);
+            const emailHash = bcrypt.hashSync(email, 10);
+            const passHash = bcrypt.hashSync(password, 10);
 
             localStorage.setItem("emailHash", emailHash);
             localStorage.setItem("passHash", passHash);
@@ -22,11 +22,26 @@ const LoginPage = () => {
 
             // Simulate a successful login
             alert("Login successful!");
-            navigate("/dashboard"); // Redirect to the dashboard
+            navigate("/dashboard");
         } else {
             alert("Invalid email or password");
         }
     };
+
+    // Verify Login
+    //   const navigate = useNavigate();
+    useEffect(() => {
+        const emailHash = localStorage.getItem("emailHash");
+        const passHash = localStorage.getItem("passHash");
+
+        if (emailHash && passHash) {
+            const isMatch = bcrypt.compareSync(import.meta.env.VITE_ADMIN_EMAIL, emailHash) && bcrypt.compareSync(import.meta.env.VITE_ADMIN_PASSWORD, passHash);
+            if (isMatch) {
+                navigate("/dashboard")
+            }
+        }
+    }, [])
+
 
     return (
         <div className="flex items-center justify-center h-screen bg-gray-100">
