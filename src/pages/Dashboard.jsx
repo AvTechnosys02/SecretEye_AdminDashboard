@@ -244,6 +244,7 @@ const Dashboard = () => {
   useEffect(() => {
     const emailHash = localStorage.getItem("emailHash");
     const passHash = localStorage.getItem("passHash");
+    
 
     if (emailHash && passHash) {
       const isMatch = bcrypt.compareSync(import.meta.env.VITE_ADMIN_EMAIL, emailHash) && bcrypt.compareSync(import.meta.env.VITE_ADMIN_PASSWORD, passHash);
