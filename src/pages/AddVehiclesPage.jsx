@@ -28,7 +28,8 @@ import bcrypt from "bcryptjs";
 const AddVehiclesPage = () => {
   const dispatch = useDispatch();
 
-  const vehicles = useSelector((state) => state.vehicle.vehicleList);
+  const allVehicles = useSelector((state) => state.vehicle.vehicleList);  
+  const vehicles = allVehicles.filter((vehicle) => !vehicle.location);  
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
