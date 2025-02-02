@@ -325,7 +325,7 @@ const Dashboard = () => {
           <Box className=" w-full flex gap-3 flex-col h-full rounded-md  md:px-4" >
             {
               selectedCard ? <>
-                <p className=" text-2xl md:text-4xl font-semibold capitalize" >{selectedCard?.userName}</p>
+                <p className=" text-2xl md:text-4xl font-semibold capitalize" >{`${selectedCard?.userName} - ${selectedCard?.vehicles.length}`}</p>
                 <Box className=" overflow-y-scroll w-full sticky top-2 max-h-screen flex gap-1 flex-col">
                   {
                     selectedCard?.vehicles.map((data) => {
